@@ -1,0 +1,32 @@
+body {
+  font-family: 'Arial', sans-serif; /* 设置页面的默认字体为 Arial，若无则使用系统无衬线字体 */
+  margin: 0;                        /* 去掉页面默认外边距 */
+  padding: 0;                       /* 去掉页面默认内边距 */
+  box-sizing: border-box;            /* 让所有元素的宽高包含内边距和边框 */
+}
+
+.header {
+  background-color: #333;            /* 设置头部区域背景颜色为深灰色 */
+  color: white;                      /* 设置文字颜色为白色 */
+  padding: 1rem;                     /* 内边距为 1rem */
+  text-align: center;                /* 文本居中对齐 */
+}
+
+.main {
+  display: flex;                     /* 使用 flex 布局 */
+  justify-content: space-around;     /* 子元素均匀分布，左右留有间隔 */
+  padding: 2rem;                     /* 内边距为 2rem */
+}
+
+section {
+  border: 1px solid #ddd;            /* 给区块加浅灰色边框 */
+  padding: 1rem;                     /* 内边距为 1rem */
+  text-align: center;                /* 文本居中对齐 */
+}
+
+.footer {
+  background-color: #333;            /* 设置底部区域背景颜色为深灰色 */
+  color: white;                      /* 设置文字颜色为白色 */
+  padding: 1rem;                     /* 内边距为 1rem */
+  text-align: center;                /* 文本居中对齐 */
+}

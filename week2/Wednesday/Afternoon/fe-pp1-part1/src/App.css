@@ -1,0 +1,28 @@
+.id-card {
+  display: flex;                 /* 使用 Flex 布局，让子元素横向排列 */
+  align-items: center;           /* 垂直居中对齐子元素 */
+  border: 1px solid black;     /* 黑色边框 */
+  width: 98%;                     /* 宽度为父容器的 **%，随窗口变化 */
+  max-width: 1500px;              /* 最大宽度 ，防止大屏幕过宽 */
+  margin: 5px auto;               /* 上下间距 ，水平居中 */
+  padding: 10px;                  /* 内边距 ，内容不贴边框 */
+  box-sizing: border-box;         /* padding 和 border 计算在 width 内 */
+}
+
+.id-card img {
+  width: 120px;                   /* 图片固定宽度 */
+  margin-right: 10px;             /* 右侧间距 ，与右边文字分开 */
+  border-radius: 8px;             /* 圆角边框，使图片更美观 */
+}
+
+.id-card .props p {
+  margin: 2px;                  /* 行间距 */
+}
+
+.random {
+  display: table;             /* 让边框包住内容宽度 自动换行*/
+  border: 1px solid black;  /* 黑色边框 */
+  padding: 10px;              /* 内边距，让内容不贴边框 */
+  margin: 5px 0;              /* 上下间距 */
+  margin-left: 5px;          /* 左侧距离窗口 5px */
+}
