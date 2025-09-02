@@ -1,0 +1,142 @@
+{
+	"info": {
+		"_postman_id": "71553b70-b54a-40c9-ab26-7e6726a0bfbe",
+		"name": "Get All Feedbacks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47884325",
+		"_collection_link": "https://luo-s-team-2.postman.co/workspace/Team-Workspace~72bf9d32-fe44-447c-8f0f-c6419f3a1b20/collection/47884325-71553b70-b54a-40c9-ab26-7e6726a0bfbe?action=share&source=collection_link&creator=47884325"
+	},
+	"item": [
+		{
+			"name": "Get All Feedbacks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/feedback",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"feedback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Feedback",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"John Smith\",\r\n  \"message\": \"Great session on React components! I found the examples very helpful.\",\r\n  \"rating\": 5\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/feedback",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"feedback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Feedback By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/feedback/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"feedback",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Feedback",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"rating\" : 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/feedback/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"feedback",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Feedback",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/feedback/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"feedback",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Feedbacks",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
