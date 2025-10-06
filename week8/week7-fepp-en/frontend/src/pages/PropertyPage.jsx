@@ -1,21 +1,30 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const PropertyPage = () => {
+const PropertyPage = ({ isAuthenticated }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user ? user.token : null;
+
   const deleteProperty = async (id) => {
     try {
       const res = await fetch(`/api/properties/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (!res.ok) {
-        throw new Error("Failed to delete property");
+        const errorText = await res.text();
+        throw new Error(`Failed to delete property: ${errorText}`);
       }
+      console.log("Property deleted successfully");
+      navigate("/");
     } catch (error) {
       console.error("Error deleting property:", error);
     }
@@ -24,7 +33,6 @@ const PropertyPage = () => {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        console.log("id: ", id);
         const res = await fetch(`/api/properties/${id}`);
         if (!res.ok) {
           throw new Error("Network response was not ok");
@@ -48,7 +56,6 @@ const PropertyPage = () => {
     if (!confirm) return;
 
     deleteProperty(propertyId);
-    navigate("/");
   };
 
   return (
@@ -68,8 +75,15 @@ const PropertyPage = () => {
           <p>ZIP Code: {property.location.zipCode}</p>
           <p>Square Feet: {property.squareFeet} sq ft</p>
           <p>Year Built: {property.yearBuilt}</p>
-          <button onClick={() => navigate(`/properties/${property._id}/edit`)}>Edit</button>
-          <button onClick={() => onDeleteClick(property._id)}>delete</button>
+
+          {isAuthenticated && (
+            <>
+              <button onClick={() => onDeleteClick(property._id)}>delete</button>
+              <button onClick={() => navigate(`/properties/${property._id}/edit`)}>
+                edit
+              </button>
+            </>
+          )}
         </>
       )}
     </div>

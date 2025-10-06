@@ -13,28 +13,33 @@ const AddPropertyPage = () => {
   const [squareFeet, setSquareFeet] = useState("");
   const [yearBuilt, setYearBuilt] = useState("");
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user ? user.token : null;
+
   const navigate = useNavigate();
  
   const addProperty = async (newProperty) => {
     try {
+      console.log("Adding property:", newProperty);
       const res = await fetch("/api/properties", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newProperty),
       });
       if (!res.ok) {
         throw new Error("Failed to add property");
       }
+      return true;
     } catch (error) {
-      console.error(error);
+      console.error("Error adding property:", error);
       return false;
     }
-    return true;
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
     const newProperty = {
@@ -52,8 +57,13 @@ const AddPropertyPage = () => {
       yearBuilt: parseInt(yearBuilt),
     };
 
-    addProperty(newProperty);
-    return navigate("/");
+    const success = await addProperty(newProperty);
+    if (success) {
+      console.log("Property Added Successfully");
+      navigate("/");
+    } else {
+      console.error("Failed to add the property");
+    }
   };
 
   return (
@@ -131,7 +141,7 @@ const AddPropertyPage = () => {
           value={yearBuilt}
           onChange={(e) => setYearBuilt(e.target.value)}
         />
-        <button>Add Property</button>
+        <button type="submit">Add Property</button>
       </form>
     </div>
   );

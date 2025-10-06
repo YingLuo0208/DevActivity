@@ -12,18 +12,48 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user && user.token ? true : false;
+  });
+  
+
   return (
     <div className="App">
       <BrowserRouter>
-        <Navbar />
+      <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated}/>
         <div className="content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/properties/:id" element={<PropertyPage />} />
-            <Route path="/properties/add-property" element={<AddPropertyPage />} />
-            <Route path="/properties/:id/edit" element={<EditPropertyPage />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/properties/:id" element={<PropertyPage isAuthenticated={isAuthenticated} />} />
+            <Route
+              path="/properties/add-property"
+              element={isAuthenticated ? <AddPropertyPage /> : <Navigate to="/signup" />}
+            />           
+            <Route
+              path="/properties/:id/edit"
+              element={isAuthenticated ? <EditPropertyPage /> : <Navigate to="/signup" />}
+            />
+            <Route
+              path="/signup"
+              element={
+                isAuthenticated ? (
+                  <Navigate to="/" />
+                ) : (
+                  <Signup setIsAuthenticated={setIsAuthenticated} />
+                )
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                isAuthenticated ? (
+                  <Navigate to="/" />
+                ) : (
+                  <Login setIsAuthenticated={setIsAuthenticated} />
+                )
+              }
+            />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </div>

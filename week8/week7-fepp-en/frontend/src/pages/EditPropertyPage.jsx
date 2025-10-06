@@ -19,14 +19,19 @@ const EditPropertyPage = () => {
   const [squareFeet, setSquareFeet] = useState("");
   const [yearBuilt, setYearBuilt] = useState("");
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = user ? user.token : null;
+
   const navigate = useNavigate();
 
   const updateProperty = async (property) => {
     try {
+      console.log("Updating property:", property);
       const res = await fetch(`/api/properties/${property.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(property),
       });
@@ -93,10 +98,10 @@ const EditPropertyPage = () => {
 
     const success = await updateProperty(updatedProperty);
     if (success) {
-      // toast.success("Property Updated Successfully");
+      console.log("Property Updated Successfully");
       navigate("/");
     } else {
-      // toast.error("Failed to update the property");
+      console.error("Failed to update the property");
     }
   };
 

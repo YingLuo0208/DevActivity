@@ -12,8 +12,13 @@ const propertySchema = new mongoose.Schema({
     zipCode: { type: String, required: true } // Postal/ZIP code for the location
   },
   squareFeet: { type: Number, required: true }, // Total area of the property in square feet
-  yearBuilt: { type: Number, required: true } // Year the property was constructed
-});
+  yearBuilt: { type: Number, required: true }, // Year the property was constructed
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
+}, { timestamps: true });
 
 
 //add  virtual field id

@@ -1,89 +1,94 @@
-const Property = require("../models/propertyModel");
 const mongoose = require("mongoose");
+const Property = require("../models/propertyModel");
 
-//GET / properties;
+// Get all properties
 const getAllProperties = async (req, res) => {
   try {
     const properties = await Property.find({}).sort({ createdAt: -1 });
     res.status(200).json(properties);
   } catch (error) {
-    res.status(500).json({ message: "Failed to retrieve properties" });
+    console.error("Error fetching properties:", error);
+    res.status(500).json({ error: "Server Error" });
   }
 };
 
-// POST /properties
+// Create a new property
 const createProperty = async (req, res) => {
   try {
-    const newProperty = await Property.create({ ...req.body });
+    const user_id = req.user._id;
+    const newProperty = new Property({
+      ...req.body,
+      user_id,
+    });
+    await newProperty.save();
     res.status(201).json(newProperty);
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "Failed to create property", error: error.message });
+    console.error("Error creating property:", error);
+    res.status(500).json({ error: "Server Error" });
   }
 };
 
-// GET /properties/:propertyId
+// Get property by ID
 const getPropertyById = async (req, res) => {
   const { propertyId } = req.params;
-
   if (!mongoose.Types.ObjectId.isValid(propertyId)) {
-    return res.status(400).json({ message: "Invalid property ID" });
+    return res.status(404).json({ error: "No such property" });
   }
 
   try {
     const property = await Property.findById(propertyId);
-    if (property) {
-      res.status(200).json(property);
-    } else {
-      res.status(404).json({ message: "Property not found" });
+    if (!property) {
+      console.log("Property not found");
+      return res.status(404).json({ message: "Property not found" });
     }
+    res.status(200).json(property);
   } catch (error) {
-    res.status(500).json({ message: "Failed to retrieve property" });
+    console.error("Error fetching property:", error);
+    res.status(500).json({ error: "Server Error" });
   }
 };
 
-// PUT /properties/:propertyId
+// Update property by ID
 const updateProperty = async (req, res) => {
   const { propertyId } = req.params;
-
   if (!mongoose.Types.ObjectId.isValid(propertyId)) {
-    return res.status(400).json({ message: "Invalid property ID" });
+    return res.status(404).json({ error: "No such property" });
   }
 
   try {
-    const updatedProperty = await Property.findByIdAndUpdate(
-      propertyId,
+    // const user_id = req.user._id;
+    const property = await Property.findOneAndUpdate(
+      { _id: propertyId },
       { ...req.body },
-      { new: true, runValidators: true }
+      { new: true }
     );
-    if (updatedProperty) {
-      res.status(200).json(updatedProperty);
-    } else {
-      res.status(404).json({ message: "Property not found" });
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
     }
+    res.status(200).json(property);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update property", error: error.message });
+    console.error("Error updating property:", error);
+    res.status(500).json({ error: "Server Error" });
   }
 };
 
-// DELETE /properties/:propertyId
+// Delete property by ID
 const deleteProperty = async (req, res) => {
   const { propertyId } = req.params;
-
   if (!mongoose.Types.ObjectId.isValid(propertyId)) {
-    return res.status(400).json({ message: "Invalid property ID" });
+    return res.status(404).json({ error: "No such property" });
   }
 
   try {
-    const deletedProperty = await Property.findOneAndDelete({ _id: propertyId });
-    if (deletedProperty) {
-      res.status(204).send(); // 204 No Content
-    } else {
-      res.status(404).json({ message: "Property not found" });
+    // const user_id = req.user._id;
+    const property = await Property.findOneAndDelete({ _id: propertyId });
+    if (!property) {
+      return res.status(404).json({ message: "Property not found" });
     }
+    res.status(204).send(); // 204 No Content
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete property" });
+    console.error("Error deleting property:", error);
+    res.status(500).json({ error: "Server Error" });
   }
 };
 

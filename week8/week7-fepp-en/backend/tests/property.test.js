@@ -4,6 +4,9 @@ const app = require("../app"); // Your Express app
 const api = supertest(app);
 const Property = require("../models/propertyModel");
 
+// Mock user ID for testing
+const mockUserId = new mongoose.Types.ObjectId();
+
 const properties = [
   {
     title: "Modern Downtown Apartment",
@@ -17,7 +20,8 @@ const properties = [
       zipCode: "02101"
     },
     squareFeet: 1200,
-    yearBuilt: 2020
+    yearBuilt: 2020,
+    user_id: mockUserId
   },
   {
     title: "Cozy Suburban House",
@@ -31,7 +35,8 @@ const properties = [
       zipCode: "02139"
     },
     squareFeet: 1800,
-    yearBuilt: 2015
+    yearBuilt: 2015,
+    user_id: mockUserId
   },
 ];
 
@@ -69,7 +74,8 @@ describe("Property Controller", () => {
         zipCode: "02110"
       },
       squareFeet: 3000,
-      yearBuilt: 2018
+      yearBuilt: 2018,
+      user_id: mockUserId
     };
 
     await api
