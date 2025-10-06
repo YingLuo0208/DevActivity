@@ -3,9 +3,27 @@ const supertest = require("supertest");
 const app = require("../app"); // Your Express app
 const api = supertest(app);
 const Property = require("../models/propertyModel");
+const User = require("../models/userModel");
 
-// Mock user ID for testing
-const mockUserId = new mongoose.Types.ObjectId();
+// Mock user for testing
+const mockUser = {
+  name: "Test User",
+  username: "testuser",
+  password: "Test123!",
+  phone_number: "123-456-7890",
+  gender: "male",
+  date_of_birth: new Date("1990-01-01"),
+  role: "user",
+  address: {
+    street: "123 Test St",
+    city: "Test City",
+    state: "TS",
+    zipCode: "12345"
+  }
+};
+
+let authToken = "";
+let mockUserId = "";
 
 const properties = [
   {
@@ -21,7 +39,7 @@ const properties = [
     },
     squareFeet: 1200,
     yearBuilt: 2020,
-    user_id: mockUserId
+    user_id: null // Will be set in beforeEach
   },
   {
     title: "Cozy Suburban House",
@@ -36,14 +54,36 @@ const properties = [
     },
     squareFeet: 1800,
     yearBuilt: 2015,
-    user_id: mockUserId
+    user_id: null // Will be set in beforeEach
   },
 ];
 
 describe("Property Controller", () => {
+  beforeAll(async () => {
+    // Create a test user and get auth token
+    await User.deleteMany({});
+    const signupResponse = await api
+      .post("/api/users/signup")
+      .send(mockUser);
+    
+    authToken = signupResponse.body.token;
+    
+    // Get user info using the token
+    const userResponse = await api
+      .get("/api/users/me")
+      .set("Authorization", `Bearer ${authToken}`);
+      
+    mockUserId = userResponse.body._id;
+  });
+
   beforeEach(async () => {
     await Property.deleteMany({});
-    await Property.insertMany(properties);
+    // Set user_id for all properties
+    const propertiesWithUserId = properties.map(property => ({
+      ...property,
+      user_id: mockUserId
+    }));
+    await Property.insertMany(propertiesWithUserId);
   });
 
   afterAll(() => {
@@ -74,12 +114,12 @@ describe("Property Controller", () => {
         zipCode: "02110"
       },
       squareFeet: 3000,
-      yearBuilt: 2018,
-      user_id: mockUserId
+      yearBuilt: 2018
     };
 
     await api
       .post("/api/properties")
+      .set("Authorization", `Bearer ${authToken}`)
       .send(newProperty)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -88,6 +128,29 @@ describe("Property Controller", () => {
     expect(propertiesAfterPost).toHaveLength(properties.length + 1);
     const propertyTitles = propertiesAfterPost.map((property) => property.title);
     expect(propertyTitles).toContain(newProperty.title);
+  });
+
+  // Test POST /api/properties without auth token
+  it("should return 401 when POST /api/properties is called without auth token", async () => {
+    const newProperty = {
+      title: "Unauthorized Property",
+      type: "House",
+      description: "This should fail",
+      price: 100000,
+      location: {
+        address: "123 Fail St",
+        city: "Boston",
+        state: "MA",
+        zipCode: "02101"
+      },
+      squareFeet: 1000,
+      yearBuilt: 2020
+    };
+
+    await api
+      .post("/api/properties")
+      .send(newProperty)
+      .expect(401);
   });
 
   // Test GET /api/properties/:id
@@ -114,6 +177,7 @@ describe("Property Controller", () => {
 
     await api
       .put(`/api/properties/${property._id}`)
+      .set("Authorization", `Bearer ${authToken}`)
       .send(updatedProperty)
       .expect(200)
       .expect("Content-Type", /application\/json/);
@@ -123,22 +187,52 @@ describe("Property Controller", () => {
     expect(updatedPropertyCheck.price).toBe(updatedProperty.price);
   });
 
-  it("should return 400 for invalid property ID when PUT /api/properties/:id", async () => {
+  it("should return 401 when PUT /api/properties/:id is called without auth token", async () => {
+    const property = await Property.findOne();
+    const updatedProperty = {
+      description: "Unauthorized update",
+      price: 999999,
+    };
+
+    await api
+      .put(`/api/properties/${property._id}`)
+      .send(updatedProperty)
+      .expect(401);
+  });
+
+  it("should return 404 for invalid property ID when PUT /api/properties/:id", async () => {
     const invalidId = "12345";
-    await api.put(`/api/properties/${invalidId}`).send({}).expect(400);
+    await api
+      .put(`/api/properties/${invalidId}`)
+      .set("Authorization", `Bearer ${authToken}`)
+      .send({})
+      .expect(404);
   });
 
   // Test DELETE /api/properties/:id
   it("should delete one property by ID when DELETE /api/properties/:id is called", async () => {
     const property = await Property.findOne();
-    await api.delete(`/api/properties/${property._id}`).expect(204);
+    await api
+      .delete(`/api/properties/${property._id}`)
+      .set("Authorization", `Bearer ${authToken}`)
+      .expect(204);
 
     const deletedPropertyCheck = await Property.findById(property._id);
     expect(deletedPropertyCheck).toBeNull();
   });
 
-  it("should return 400 for invalid property ID when DELETE /api/properties/:id", async () => {
+  it("should return 401 when DELETE /api/properties/:id is called without auth token", async () => {
+    const property = await Property.findOne();
+    await api
+      .delete(`/api/properties/${property._id}`)
+      .expect(401);
+  });
+
+  it("should return 404 for invalid property ID when DELETE /api/properties/:id", async () => {
     const invalidId = "12345";
-    await api.delete(`/api/properties/${invalidId}`).expect(400);
+    await api
+      .delete(`/api/properties/${invalidId}`)
+      .set("Authorization", `Bearer ${authToken}`)
+      .expect(404);
   });
 });
