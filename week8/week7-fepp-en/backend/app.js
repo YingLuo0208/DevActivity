@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require("express");
 const app = express();
 const propertyRouter = require("./routes/propertyRouter");
+const userRouter = require("./routes/userRouter");
 const { unknownEndpoint,errorHandler } = require("./middleware/customMiddleware");
 const connectDB = require("./config/db");
 const cors = require("cors");
@@ -14,6 +15,8 @@ connectDB();
  
 // Use the propertyRouter for all "/properties" routes
 app.use("/api/properties", propertyRouter);
+// Use the userRouter for all "/users" routes
+app.use("/api/users", userRouter);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);
