@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // pages & components
+import Navbar from "./components/Navbar";
 import Home from "./pages/HomePage";
 import AddPropertyPage from "./pages/AddPropertyPage";
-import Navbar from "./components/Navbar";
+import PropertyPage from  "./pages/PropertyPage"
 import NotFoundPage from "./pages/NotFoundPage"
 
 const App = () => {
@@ -15,7 +16,8 @@ const App = () => {
           <div className="content">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/add-property" element={<AddPropertyPage />} />
+              <Route path="/properties/add-property" element={<AddPropertyPage />} />
+              <Route path="/properties/:id" element={<PropertyPage />} />             
               <Route path='*' element={<NotFoundPage />} />
             </Routes>
           </div>
