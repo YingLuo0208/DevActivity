@@ -1,12 +1,13 @@
-const PropertyListing = () => {
+const PropertyListing = ({property}) => {
   return (
     <div className="property-preview">
-      <h2>Property Title</h2>
-      <p>Type: some type</p>
-      <p>Price: $000,000</p>
-      <p>Location: some city, state</p>
-      <p>Square Feet: 0000 sq ft</p>
-      <p>Year Built: 0000</p>
+      <h2>{property.title}</h2>
+      <p>Type: {property.type}</p>
+      <p>Description: {property.description}</p>
+      <p>Price: ${property.price}</p>
+      <p>Location: {property.location.city}, {property.location.state}</p>
+      <p>Square Feet: {property.squareFeet} sq ft</p>
+      <p>Year Built: {property.yearBuilt}</p>
     </div>
   );
 };

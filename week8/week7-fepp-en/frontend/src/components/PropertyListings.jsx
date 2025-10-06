@@ -1,11 +1,12 @@
 import PropertyListing from "./PropertyListing";
 
-const PropertyListings = () => {
+const PropertyListings = ({ properties }) => {
+  
   return (
     <div className="property-list">
-      <PropertyListing />
-      <PropertyListing />
-      <PropertyListing />
+      {properties.map((property) => (
+        <PropertyListing key={property.id} property={property} />
+      ))}
     </div>
   );
 };

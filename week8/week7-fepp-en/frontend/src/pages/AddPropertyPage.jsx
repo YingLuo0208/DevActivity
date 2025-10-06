@@ -1,9 +1,59 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const AddPropertyPage = () => {
-  
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState("Apartment");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [squareFeet, setSquareFeet] = useState("");
+  const [yearBuilt, setYearBuilt] = useState("");
+
+  const navigate = useNavigate();
+ 
+  const addProperty = async (newProperty) => {
+    try {
+      const res = await fetch("/api/properties", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newProperty),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to add property");
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+    return true;
+  };
+
   const submitForm = (e) => {
     e.preventDefault();
-    console.log("submitForm called");
-   
+
+    const newProperty = {
+      title,
+      type,
+      description,
+      price: parseInt(price),
+      location: {
+        address,
+        city,
+        state,
+        zipCode,
+      },
+      squareFeet: parseInt(squareFeet),
+      yearBuilt: parseInt(yearBuilt),
+    };
+
+    addProperty(newProperty);
+    return navigate("/");
   };
 
   return (
@@ -14,10 +64,11 @@ const AddPropertyPage = () => {
         <input
           type="text"
           required
-          value=""
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <label>Property type:</label>
-        <select >
+        <select value={type} onChange={(e) => setType(e.target.value)}>
           <option value="Apartment">Apartment</option>
           <option value="House">House</option>
           <option value="Commercial">Commercial</option>
@@ -28,50 +79,57 @@ const AddPropertyPage = () => {
         <label>Property Description:</label>
         <textarea
           required
-          value=""
-
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         ></textarea>
         <label>Price:</label>
         <input
           type="number"
           required
-          value=""
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
         />
         <label>Address:</label>
         <input
           type="text"
           required
-          value=""
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
         />
         <label>City:</label>
         <input
           type="text"
           required
-          value=""
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
         />
         <label>State:</label>
         <input
           type="text"
           required
-          value=""
+          value={state}
+          onChange={(e) => setState(e.target.value)}
         />
         <label>ZIP Code:</label>
         <input
           type="text"
           required
-          value=""
+          value={zipCode}
+          onChange={(e) => setZipCode(e.target.value)}
         />
         <label>Square Feet:</label>
         <input
           type="number"
           required
-          value=""
+          value={squareFeet}
+          onChange={(e) => setSquareFeet(e.target.value)}
         />
         <label>Year Built:</label>
         <input
           type="number"
           required
-          value=""
+          value={yearBuilt}
+          onChange={(e) => setYearBuilt(e.target.value)}
         />
         <button>Add Property</button>
       </form>

@@ -3,12 +3,24 @@ const mongoose = require("mongoose");
 
 //GET / properties;
 const getAllProperties = async (req, res) => {
-  res.send("getAllProperties");
+  try {
+    const properties = await Property.find({}).sort({ createdAt: -1 });
+    res.status(200).json(properties);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to retrieve properties" });
+  }
 };
 
 // POST /properties
 const createProperty = async (req, res) => {
-  res.send("createProperty");
+  try {
+    const newProperty = await Property.create({ ...req.body });
+    res.status(201).json(newProperty);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ message: "Failed to create property", error: error.message });
+  }
 };
 
 // GET /properties/:propertyId
