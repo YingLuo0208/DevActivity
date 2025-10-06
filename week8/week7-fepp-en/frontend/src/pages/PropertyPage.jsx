@@ -68,6 +68,7 @@ const PropertyPage = () => {
           <p>ZIP Code: {property.location.zipCode}</p>
           <p>Square Feet: {property.squareFeet} sq ft</p>
           <p>Year Built: {property.yearBuilt}</p>
+          <button onClick={() => navigate(`/properties/${property._id}/edit`)}>Edit</button>
           <button onClick={() => onDeleteClick(property._id)}>delete</button>
         </>
       )}
